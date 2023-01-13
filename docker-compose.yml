@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  API:
+    image: "naijagigs4me-v1.jar"
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgresdb:
+          condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:5432/naijagigs4medb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=thinkaboutit
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  postgresdb:
+    image: postgres:13.3-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=thinkaboutit
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=naijagigs4medb
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
